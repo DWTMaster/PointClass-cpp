@@ -99,7 +99,7 @@ class TPoint {
     template<typename T> friend TPoint<T> operator -(const TPoint<T> &a, const TPoint<T> &b);
 
     template<typename ST, typename T> friend ST& operator >>(ST& stream, TPoint<T> &p);
-    template<typename ST, typename T> friend ST& operator <<(ST& stream, TPoint<T> &p);
+    template<typename ST, typename T> friend ST& operator <<(ST& stream, const TPoint<T> &p);
 };
 
 template<typename T, typename VT> TPoint<T> operator *(const TPoint<T> &p, const VT &value) {
@@ -132,7 +132,7 @@ template<typename T> TPoint<T> operator -(const TPoint<T> &a, const TPoint<T> &b
 }
 
 template<typename ST, typename T> ST& operator >>(ST& stream, TPoint<T> &p) { return stream >> p.x >> p.y; }
-template<typename ST, typename T> ST& operator <<(ST& stream, TPoint<T> &p) { return stream << p.x << ' ' << p.y; }
+template<typename ST, typename T> ST& operator <<(ST& stream, const TPoint<T> &p) { return stream << p.x << ' ' << p.y; }
 
 template<typename T> std::string to_string(const TPoint<T> &p) {
     return "(" + to_string(p.x) + ", " + to_string(p.y) + ")";
