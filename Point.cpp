@@ -59,6 +59,7 @@ class TPoint {
         x /= static_cast<Type>(value); y /= static_cast<Type>(value); return *this;
     }
     TPoint operator -() { return TPoint(-x, -y, id); }
+    bool operator !() { return abs(x) <= eps && abs(y) <= eps; }
 
     template<typename T, typename VT> friend TPoint<T> operator *(const TPoint<T> &p, const VT &value);
     template<typename T, typename VT> friend TPoint<T> operator /(const TPoint<T> &p, const VT &value);
@@ -75,9 +76,9 @@ class TPoint {
     template<typename T> friend TPoint<T> operator +(const TPoint<T> &a, const TPoint<T> &b);
     template<typename T> friend TPoint<T> operator -(const TPoint<T> &a, const TPoint<T> &b);
 
-    template<typename T> friend T operator *(const TPoint<T> &a, const TPoint<T> &b);
-    template<typename T> friend T operator %(const TPoint<T> &a, const TPoint<T> &b);
-    template<typename T> friend T operator ^(const TPoint<T> &a, const TPoint<T> &b);
+    template<typename T> friend auto operator *(const TPoint<T> &a, const TPoint<T> &b);
+    template<typename T> friend auto operator %(const TPoint<T> &a, const TPoint<T> &b);
+    template<typename T> friend auto operator ^(const TPoint<T> &a, const TPoint<T> &b);
 
     template<typename ST, typename T> friend ST& operator >>(ST& stream, TPoint<T> &p);
     template<typename ST, typename T> friend ST& operator <<(ST& stream, TPoint<T> &p);
@@ -112,9 +113,21 @@ template<typename T> TPoint<T> operator -(const TPoint<T> &a, const TPoint<T> &b
     return TPoint<T>(a.x - b.x, a.y - b.y);
 }
 
-template<typename T> T operator *(const TPoint<T> &a, const TPoint<T> &b) { return a.x * b.x + a.y * b.y; }
-template<typename T> T operator %(const TPoint<T> &a, const TPoint<T> &b) { return a.x * b.y - a.y * b.x; }
-template<typename T> T operator ^(const TPoint<T> &a, const TPoint<T> &b) { return a.x * b.y - a.y * b.x; }
+template<typename T> auto operator *(const TPoint<T> &a, const TPoint<T> &b) -> decltype(int64_t{}) {
+    if constexpr (std::is_integral_v<T>)
+        return static_cast<long long>(a.x) * b.x + static_cast<long long>(a.y) * b.y;
+    return static_cast<long double>(a.x) * b.x + static_cast<long double>(a.y) * b.y;
+}
+template<typename T> auto operator %(const TPoint<T> &a, const TPoint<T> &b) -> decltype(int64_t{}) {
+    if constexpr (std::is_integral_v<T>)
+        return static_cast<long long>(a.x) * b.y - static_cast<long long>(a.y) * b.x;
+    return static_cast<long double>(a.x) * b.y - static_cast<long double>(a.y) * b.x;
+}
+template<typename T> auto operator ^(const TPoint<T> &a, const TPoint<T> &b) -> decltype(int64_t{}) {
+    if constexpr (std::is_integral_v<T>)
+        return static_cast<long long>(a.x) * b.y - static_cast<long long>(a.y) * b.x;
+    return static_cast<long double>(a.x) * b.y - static_cast<long double>(a.y) * b.x;
+}
 
 template<typename ST, typename T> ST& operator >>(ST& stream, TPoint<T> &p) { return stream >> p.x >> p.y; }
 template<typename ST, typename T> ST& operator <<(ST& stream, TPoint<T> &p) { return stream << p.x << ' ' << p.y; }
